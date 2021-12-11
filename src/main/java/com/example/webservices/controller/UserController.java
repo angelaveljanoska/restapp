@@ -1,6 +1,7 @@
 package com.example.webservices.controller;
 
 import com.example.webservices.model.User;
+import com.example.webservices.model.UserDto;
 import com.example.webservices.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,32 +12,32 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     private UserServiceImpl userService;
 
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(String username, String password) {
-        return ResponseEntity.ok(userService.login(username, password));
+    public ResponseEntity<String> login(@RequestBody User userInput) {
+        return ResponseEntity.ok(userService.login(userInput.getUsername(), userInput.getPassword()));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(String username, String firstPassword, String secondPassword) throws Exception {
-        userService.register(username, firstPassword, secondPassword);
-        return ResponseEntity.ok("Successfull registration!");
+    public ResponseEntity<String> register(@RequestBody UserDto userDto) throws Exception {
+        userService.register(userDto.getUsername(), userDto.getFirstPassword(), userDto.getSecondPassword());
+        return ResponseEntity.ok("Successful registration!");
     }
 
-    @DeleteMapping("unregister")
-    public ResponseEntity<String> unregister(String username, String firstPassword, String secondPassword) throws Exception {
-        userService.unregister(username, firstPassword, secondPassword);
-        return ResponseEntity.ok("Successfull removal!");
+    @DeleteMapping
+    public ResponseEntity<String> unregister(@RequestBody UserDto userDto) throws Exception {
+        userService.unregister(userDto.getUsername(), userDto.getFirstPassword(), userDto.getSecondPassword());
+        return ResponseEntity.ok("Successful removal!");
     }
 
     @ExceptionHandler(Exception.class)
